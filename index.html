@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دمج صورة مع صوت</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>دمج صورة مع صوت</h1>
+        <form id="mergeForm">
+            <label>اختر صورة:</label>
+            <input type="file" id="imageInput" accept="image/*" required><br>
+            <label>اختر ملف صوت:</label>
+            <input type="file" id="audioInput" accept="audio/*" required><br>
+            <button type="button" onclick="mergeFiles()">دمج وتنزيل</button>
+        </form>
+        <video id="resultVideo" controls style="display:none; margin-top: 20px;"></video>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
