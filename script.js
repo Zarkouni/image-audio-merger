@@ -10,7 +10,7 @@ async function mergeFiles() {
     const imageURL = URL.createObjectURL(imageInput);
     const audioURL = URL.createObjectURL(audioInput);
 
-    // إعداد عناصر الوسائط
+    // إعداد Web Audio API
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const audio = new Audio(audioURL);
     const audioSource = audioContext.createMediaElementSource(audio);
@@ -31,7 +31,7 @@ async function mergeFiles() {
     const ctx = canvas.getContext('2d');
 
     // إنشاء Stream من Canvas ودمجه مع الصوت
-    const canvasStream = canvas.captureStream(30); // معدل الإطارات 30 FPS
+    const canvasStream = canvas.captureStream(30);
     const audioStream = destination.stream;
     const combinedStream = new MediaStream([...canvasStream.getVideoTracks(), ...audioStream.getAudioTracks()]);
 
@@ -40,20 +40,24 @@ async function mergeFiles() {
 
     // جمع البيانات المسجلة
     mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-
-    // بدء التسجيل
     mediaRecorder.start();
 
-    // تشغيل الصوت ورسم الصورة بشكل مستمر
+    // تشغيل الصوت
     audio.play();
-    const drawInterval = setInterval(() => {
+
+    // رسم الصورة على Canvas باستخدام requestAnimationFrame
+    function drawFrame() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    }, 1000 / 30); // رسم بمعدل 30 FPS
+        if (!audio.paused) {
+            requestAnimationFrame(drawFrame);
+        }
+    }
 
-    // انتظار انتهاء الصوت
+    drawFrame();
+
+    // عند انتهاء الصوت
     audio.onended = () => {
-        clearInterval(drawInterval);
         mediaRecorder.stop();
     };
 
